@@ -5,6 +5,23 @@ version: 2.1
 orbs:
   terraform: circleci/terraform@3.0.1
 
+commands:
+  post-plan:
+    steps:
+      - run:
+          name: Post plan as PR comment
+          command: |-
+            export CIRCLE_PR_NUMBER=${CIRCLE_PR_NUMBER:-${CIRCLE_PULL_REQUEST##*/}}
+            touch ./terraform/out.txt
+            cat ./terraform/plan.txt >> ./terraform/out.txt
+            cat ./terraform/out.txt | github-commenter \
+              -owner ${CIRCLE_PROJECT_USERNAME} \
+              -repo ${CIRCLE_PROJECT_REPONAME} \
+              -number ${CIRCLE_PR_NUMBER} \
+              -delete-comment-regex "Output from (.|\r\n|\r|\n)*Environment: << parameters.env >>" \
+              -type pr \
+              -template_file .circleci/plan-comment.tpl
+
 jobs:
   validate:
     # Use the Terraform orb to produce a Terraform plan and add a comment as a GitHub user
@@ -13,27 +30,28 @@ jobs:
       - checkout
       - terraform/validate:
           path: ./terraform
-  plan_comment:
-    parameters:
-    docker:
-      - image: cloudposse/github-commenter:0.9.0
-    working_directory: ./terraform
+  plan:
+    executor: terraform/default
     steps:
       - checkout
       - terraform/plan:
           path: "./terraform"
       - run:
-          name: Post plan as PR comment
-          command: |-
-            touch out.txt
-            terraform show -no-color ./terraform/plan.out >> out.txt
-            cat out.txt | github-commenter \
-              -owner ${CIRCLE_PROJECT_USERNAME} \
-              -repo ${CIRCLE_PROJECT_REPONAME} \
-              -number ${CIRCLE_PR_NUMBER} \
-              -delete-comment-regex "Output from" \
-              -type pr \
-              -template_file .circleci/plan-comment.tpl
+          name: Render plan for PR comment
+          command: terraform show -no-color plan.out > plan.txt
+          working_directory: ./terraform
+      - persist_to_workspace:
+          root: ./terraform
+          paths:
+            - .
+  plan_comment:
+    docker:
+      - image: cloudposse/github-commenter:0.9.0
+    working_directory: ./terraform
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./terraform      
   apply:
     parameters:
     executor: terraform/default
@@ -41,7 +59,6 @@ jobs:
       - checkout
       - terraform/apply:
           path: ./terraform
-
 workflows:
   version: 2
   pr-workflow:
