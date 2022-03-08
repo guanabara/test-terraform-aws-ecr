@@ -15,8 +15,6 @@ jobs:
           path: ./terraform
   plan_comment:
     parameters:
-      env:
-        type: string
     docker:
       - image: cloudposse/github-commenter:0.9.0
     working_directory: ./terraform
@@ -38,8 +36,6 @@ jobs:
               -template_file .circleci/plan-comment.tpl
   apply:
     parameters:
-      env:
-        type: string
     executor: terraform/default
     steps:
       - checkout
