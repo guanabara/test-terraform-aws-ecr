@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Post plan as PR comment
           command: |-
-            echo " Environment: << paramenter.env >> \n\n" > out.txt
+            touch out.txt
             terraform show -no-color ./terraform/plan.out >> out.txt
             cat out.txt | github-commenter \
               -owner ${CIRCLE_PROJECT_USERNAME} \
