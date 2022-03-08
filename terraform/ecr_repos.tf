@@ -9,9 +9,9 @@ resource "aws_ecr_repository" "my-awesome-backend" {
 
 ## Outputs
 output "registry_id" {
-  value = aws_ecr_repository.ecs-registry_id
+  value = aws_ecr_repository.ecs-registry_id.id
 }
 
 output "repository_url" {
-  value = aws_ecr_repository.ecs-repository_url
+  value = aws_ecr_repository.ecs-repository_url.id
 }

@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    key = "workloads_infrastructure.tfstate"
+    key = "var.tf_state_bucket"
     region = "us-west-2"
   }
 }
