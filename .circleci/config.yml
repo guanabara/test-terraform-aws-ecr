@@ -75,7 +75,7 @@ workflows:
       - plan:
           name: plan
           context:
-            - aws
+            - aws-sandbox
           requires:
             - validate
       - plan_comment:
@@ -91,4 +91,4 @@ workflows:
       - apply:
           name: apply
           context:
-            - aws
+            - aws-sandbox
