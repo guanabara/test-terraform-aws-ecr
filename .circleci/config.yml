@@ -35,7 +35,7 @@ jobs:
     steps:
       - checkout
       - terraform/plan:
-          backend_config: bucket=paytient-terraform-state-mgmt-account,key=infrastructure-shared-services.tfstate
+          backend_config: bucket=tf-state-be,key=poc-test.tfstate
           path: "./terraform"
       - run:
           name: Render plan for PR comment
@@ -54,17 +54,14 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./terraform
-      - post-plan:
+      - post-plan
   apply:
-    parameters:
-      env:
-        type: string
     executor: terraform/default
     resource_class: small
     steps:
       - checkout
       - terraform/apply:
-          backend_config: bucket=paytient-terraform-state-mgmt-account,key=infrastructure-shared-services.tfstate
+          backend_config: bucket=tf-state-be,key=poc-test.tfstate
           path: ./terraform
 
 workflows:
