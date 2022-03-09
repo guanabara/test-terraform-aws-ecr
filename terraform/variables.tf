@@ -5,7 +5,14 @@ variable "aws_region" {
 }
 
 variable "tf_state_bucket" {
- description = "Terraform state backend S3 bucket "
+  description = "Terraform state backend S3 bucket "
   type        = string
-  default     = "tf-state-be" 
+  default     = "tf-state-be"
+}
+
+
+variable "ecr_repositories" {
+  description = "All ECR repository names to be created"
+  type        = list(string)
+  default     = ["the-ultimate-repo", "another-irrelavant"]
 }
