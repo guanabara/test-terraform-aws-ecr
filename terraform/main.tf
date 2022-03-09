@@ -1,5 +1,13 @@
-module "ecr_repositories" {
-	source = "./modules/ecr/"
+module "ecr_repository" {
+  source = "./modules/ecr/"
 
-	repository_names = ["my-great-be", "my-great-fe"]
+  for_each = toset(var.ecr_repositories)
+
+  repository_name = each.value
+}
+
+## outputs
+output "all_ecr_repositories_url" {
+  value = values(ecr_repository)[*].repository_url
+  description = "URL for all created ECR repositories"
 }
