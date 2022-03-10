@@ -8,7 +8,7 @@ resource "aws_ecr_repository" "repository" {
 }
 
 ## Outputs
-output "repository_url" {
-  value       = aws_ecr_repository.repository.repository_url
-  description = "URL for the created ECR repository."
+output "repository" {
+  value       = aws_ecr_repository.repository
+  description = "ECR repository details."
 }

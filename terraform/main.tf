@@ -8,6 +8,7 @@ module "ecr_repository" {
 
 ## outputs
 output "all_ecr_repositories_url" {
-  value = values(module.ecr_repository)[*].repository_url
+  value = { for repo_name in var.ecr_repositories : repo_name => module.ecr_repository[repo_name].repository.repository_url }
   description = "URL for all created ECR repositories"
 }
+
